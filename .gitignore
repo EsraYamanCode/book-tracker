@@ -480,3 +480,38 @@ $RECYCLE.BIN/
 
 # Vim temporary swap files
 *.swp
+
+# ==========================================
+# Flutter & Dart Temporary / Build Files
+# ==========================================
+**/doc/api/
+**/build/
+**/.dart_tool/
+**/.flutter-plugins
+**/.flutter-plugins-dependencies
+**/.packages
+**/.pub-cache/
+**/.pub/
+**/pubspec.lock
+
+# Android & Gradle (Flutter içi yerel geçici dosyalar)
+**/android/.gradle
+**/android/captures/
+**/android/gradlew
+**/android/gradlew.bat
+**/android/local.properties
+**/GeneratedPluginRegistrant.java
+
+# iOS (Flutter içi yerel geçici dosyalar)
+**/ios/Flutter/Generated.xcconfig
+**/ios/Flutter/flutter_export_environment.sh
+**/ios/ServiceDefinitions.json
+**/ios/Runner/GeneratedPluginRegistrant.h
+**/ios/Runner/GeneratedPluginRegistrant.m
+
+# ==========================================
+# Local Database (Backend)
+# ==========================================
+*.db
+*.db-shm
+*.db-wal
