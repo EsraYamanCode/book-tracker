@@ -28,3 +28,26 @@ public class BookResponseDto
     public string FormattedTotalTime { get; set; } = string.Empty;
     public DateTime CreatedAt { get; set; }
 }
+
+public class LogSessionDto
+{
+    [Required]
+    public int DurationSeconds { get; set; }
+
+    public DateTime StartTime { get; set; } = DateTime.UtcNow;
+    public DateTime EndTime { get; set; } = DateTime.UtcNow;
+}
+
+public class SessionResponseDto
+{
+    public int Id { get; set; }
+    public int DurationSeconds { get; set; }
+    public string FormattedDuration { get; set; } = string.Empty;
+    public DateTime CreatedAt { get; set; }
+}
+
+public class BookDetailResponseDto : BookResponseDto
+{
+    public int SessionCount { get; set; }
+    public List<SessionResponseDto> Sessions { get; set; } = new();
+}
