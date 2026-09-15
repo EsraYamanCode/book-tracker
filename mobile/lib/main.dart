@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'blocs/auth/auth_bloc.dart';
+import 'blocs/auth/auth_event.dart';
 import 'core/constants/app_theme.dart';
 import 'data/repositories/auth_repository.dart';
+import 'presentation/screens/auth_screen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -12,34 +16,22 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'KİTAPLIĞIM',
-      debugShowCheckedModeBanner: false,
-      theme: AppTheme.darkTheme,
-      home: Scaffold(
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Text(
-                'KİTAPLIĞIM',
-                style: TextStyle(
-                  fontSize: 36,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 3,
-                  color: AppTheme.accentGold,
-                ),
-              ),
-              const SizedBox(height: 12),
-              Text(
-                'Temel yapılandırma tamamlandı.',
-                style: TextStyle(
-                  color: AppTheme.textSecondary,
-                  fontFamily: 'sans-serif',
-                ),
-              ),
-            ],
+    final authRepository = AuthRepository();
+    return MultiRepositoryProvider(
+      providers: [RepositoryProvider.value(value: authRepository)],
+      child: MultiBlocProvider(
+        providers: [
+          BlocProvider(
+            create: (context) =>
+                AuthBloc(authRepository: authRepository)
+                  ..add(AuthCheckRequested()),
           ),
+        ],
+        child: MaterialApp(
+          title: 'SAYFA',
+          debugShowCheckedModeBanner: false,
+          theme: AppTheme.darkTheme,
+          home: const AuthScreen(),
         ),
       ),
     );
