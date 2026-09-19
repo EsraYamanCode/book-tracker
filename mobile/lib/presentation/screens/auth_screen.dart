@@ -4,6 +4,7 @@ import '../../blocs/auth/auth_bloc.dart';
 import '../../blocs/auth/auth_event.dart';
 import '../../blocs/auth/auth_state.dart';
 import '../../core/constants/app_theme.dart';
+import 'home_screen.dart';
 
 class AuthScreen extends StatefulWidget {
   const AuthScreen({super.key});
@@ -62,12 +63,8 @@ class _AuthScreenState extends State<AuthScreen> {
               ),
             );
           } else if (state is Authenticated) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text(
-                  'Giriş başarılı! Ana sayfaya yönlendiriliyorsunuz...',
-                ),
-              ),
+            Navigator.of(context).pushReplacement(
+              MaterialPageRoute(builder: (_) => const HomeScreen()),
             );
           }
         },

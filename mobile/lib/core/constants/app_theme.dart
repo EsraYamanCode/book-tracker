@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class AppTheme {
-  static const Color background = Color(0xFF141212);     // Sıcak koyu fon
+  static const Color background = Color(0xFF141212);
+  static const Color cardBackground = Color(0xFF1C1A16);     // Sıcak koyu fon
   static const Color surface = Color(0xFF1F1C1B);        // Kart ve kutu arka planı
   static const Color surfaceLight = Color(0xFF2B2726);   // İkincil yüzey
   static const Color accentGold = Color(0xFFD4AF37);     // Altın sarısı vurgu
