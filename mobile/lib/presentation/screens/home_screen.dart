@@ -9,6 +9,7 @@ import '../../core/constants/app_theme.dart';
 import 'auth_screen.dart';
 import '../widgets/book_card.dart';
 import '../widgets/add_book_sheet.dart';
+import 'reading_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -31,6 +32,7 @@ class _HomeScreenState extends State<HomeScreen> {
         title: const Text('Kitaplığım'),
         actions: [
           FloatingActionButton(
+            heroTag: 'logoutButton',
             backgroundColor: AppTheme.accentGold,
             foregroundColor: AppTheme.background,
             shape: const CircleBorder(),
@@ -45,6 +47,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       ),
       floatingActionButton: FloatingActionButton(
+        heroTag: 'addBookButton',
         backgroundColor: AppTheme.accentGold,
         foregroundColor: AppTheme.background,
         shape: const CircleBorder(),
@@ -70,7 +73,6 @@ class _HomeScreenState extends State<HomeScreen> {
               child: CircularProgressIndicator(color: AppTheme.accentGold),
             );
           }
-
           if (state is BookLoaded) {
             if (state.books.isEmpty) {
               return const Center(
@@ -81,7 +83,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               );
             }
-
             return ListView.separated(
               padding: const EdgeInsets.all(16),
               itemCount: state.books.length,
@@ -95,6 +96,24 @@ class _HomeScreenState extends State<HomeScreen> {
                       BookDeleteSubmitted(bookId: book.id),
                     );
                   },
+                  onActionTap: () {
+                    final isCompleted = book.status.toLowerCase() == 'completed';
+                    if (isCompleted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          backgroundColor: Color(0xFF723348),
+                          content: Text('Bu kitap tamamlandı.'),
+                          duration: Duration(seconds: 2),
+                        ),
+                      );
+                      return;
+                    }
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => ReadingScreen(book: book),
+                      ),
+                    );
+                  }
                 );
               },
             );
