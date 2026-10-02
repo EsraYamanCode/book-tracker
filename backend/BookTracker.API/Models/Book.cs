@@ -26,6 +26,8 @@ public class Book
     // Tasarımdaki mürdüm, zeytin yeşili vb. kapak hex renkleri için
     public string CoverColorHex { get; set; } = "#723348";
 
+    public string? CoverImageUrl { get; set; }
+
     public BookStatus Status { get; set; } = BookStatus.Reading;
 
     // Saniye cinsinden toplam süre

@@ -5,13 +5,14 @@ using BookTracker.API.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using BookTracker.API.Utils;
 
 namespace BookTracker.API.Controllers;
 
-[Authorize] // Token zorunlu kılındı
+[Authorize]
 [ApiController]
 [Route("api/[controller]")]
-public class BooksController : ControllerBase
+public class BooksController : BaseApiController
 {
     private readonly AppDbContext _context;
 
@@ -19,33 +20,7 @@ public class BooksController : ControllerBase
     {
         _context = context;
     }
-
-    // Token içindeki kullanıcı ID'sini çeken yardımcı metod
-    private int GetCurrentUserId()
-    {
-        var idClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        return int.TryParse(idClaim, out var userId) ? userId : 0;
-    }
-
-    // Toplam saniyeyi "1 sa 28 dk" veya "45 dk" şeklinde formatlayan metod
-    private static string FormatSeconds(int totalSeconds)
-    {
-        if (totalSeconds == 0) return "—";
-
-        var timeSpan = TimeSpan.FromSeconds(totalSeconds);
-        var hours = (int)timeSpan.TotalHours;
-        var minutes = timeSpan.Minutes;
-
-        if (hours > 0 && minutes > 0)
-            return $"{hours} sa {minutes} dk";
-        if (hours > 0)
-            return $"{hours} sa";
-        if (minutes > 0)
-            return $"{minutes} dk";
-
-        return $"{totalSeconds} sn";
-    }
-
+    
     [HttpGet]
     public async Task<ActionResult<IEnumerable<BookResponseDto>>> GetMyBooks()
     {
@@ -60,9 +35,10 @@ public class BooksController : ControllerBase
                 Title = b.Title,
                 Author = b.Author,
                 CoverColorHex = b.CoverColorHex,
+                CoverImageUrl = b.CoverImageUrl,
                 Status = b.Status.ToString(),
                 TotalReadingSeconds = b.TotalReadingSeconds,
-                FormattedTotalTime = FormatSeconds(b.TotalReadingSeconds),
+                FormattedTotalTime = TimeFormatter.FormatSeconds(b.TotalReadingSeconds),
                 CreatedAt = b.CreatedAt
             })
             .ToListAsync();
@@ -87,9 +63,10 @@ public class BooksController : ControllerBase
             Title = book.Title,
             Author = book.Author,
             CoverColorHex = book.CoverColorHex,
+            CoverImageUrl = book.CoverImageUrl,
             Status = book.Status.ToString(),
             TotalReadingSeconds = book.TotalReadingSeconds,
-            FormattedTotalTime = FormatSeconds(book.TotalReadingSeconds),
+            FormattedTotalTime = TimeFormatter.FormatSeconds(book.TotalReadingSeconds),
             CreatedAt = book.CreatedAt
         });
     }
@@ -104,6 +81,7 @@ public class BooksController : ControllerBase
             Title = dto.Title.Trim(),
             Author = dto.Author.Trim(),
             CoverColorHex = string.IsNullOrWhiteSpace(dto.CoverColorHex) ? "#723348" : dto.CoverColorHex,
+            CoverImageUrl = dto.CoverImageUrl,
             Status = BookStatus.NotStarted, // Yeni eklenen kitap varsayılan "Okunmadı"
             UserId = userId,
             TotalReadingSeconds = 0,
@@ -119,9 +97,10 @@ public class BooksController : ControllerBase
             Title = book.Title,
             Author = book.Author,
             CoverColorHex = book.CoverColorHex,
+            CoverImageUrl = book.CoverImageUrl,
             Status = book.Status.ToString(),
             TotalReadingSeconds = book.TotalReadingSeconds,
-            FormattedTotalTime = FormatSeconds(book.TotalReadingSeconds),
+            FormattedTotalTime = TimeFormatter.FormatSeconds(book.TotalReadingSeconds),
             CreatedAt = book.CreatedAt
         });
     }

@@ -5,13 +5,14 @@ using BookTracker.API.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using BookTracker.API.Utils;
 
 namespace BookTracker.API.Controllers;
 
 [Authorize]
 [ApiController]
 [Route("api/[controller]")]
-public class SessionsController : ControllerBase
+public class SessionsController : BaseApiController
 {
     private readonly AppDbContext _context;
 
@@ -20,26 +21,7 @@ public class SessionsController : ControllerBase
         _context = context;
     }
 
-    private int GetCurrentUserId()
-    {
-        var idClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        return int.TryParse(idClaim, out var userId) ? userId : 0;
-    }
 
-    private static string FormatSeconds(int totalSeconds)
-    {
-        if (totalSeconds == 0) return "0 dk";
-        var timeSpan = TimeSpan.FromSeconds(totalSeconds);
-        var hours = (int)timeSpan.TotalHours;
-        var minutes = timeSpan.Minutes;
-
-        if (hours > 0 && minutes > 0) return $"{hours} sa {minutes} dk";
-        if (hours > 0) return $"{hours} sa";
-        if (minutes > 0) return $"{minutes} dk";
-        return $"{totalSeconds} sn";
-    }
-
-    // Bir kitabın detaylarını ve geçmiş oturumlarını getirir
     [HttpGet("book/{bookId}")]
     public async Task<ActionResult<BookDetailResponseDto>> GetBookSessions(int bookId)
     {
@@ -58,7 +40,7 @@ public class SessionsController : ControllerBase
             {
                 Id = s.Id,
                 DurationSeconds = s.DurationSeconds,
-                FormattedDuration = FormatSeconds(s.DurationSeconds),
+                FormattedDuration = TimeFormatter.FormatSeconds(s.DurationSeconds),
                 CreatedAt = s.CreatedAt
             })
             .ToList();
@@ -71,14 +53,13 @@ public class SessionsController : ControllerBase
             CoverColorHex = book.CoverColorHex,
             Status = book.Status.ToString(),
             TotalReadingSeconds = book.TotalReadingSeconds,
-            FormattedTotalTime = FormatSeconds(book.TotalReadingSeconds),
+            FormattedTotalTime = TimeFormatter.FormatSeconds(book.TotalReadingSeconds),
             CreatedAt = book.CreatedAt,
             SessionCount = sessions.Count,
             Sessions = sessions
         });
     }
 
-    // Oturum kaydı ekler (Duraklatıldığında çağrılır)
     [HttpPost("book/{bookId}/log")]
     public async Task<IActionResult> LogSession(int bookId, [FromBody] LogSessionDto dto)
     {
@@ -102,7 +83,6 @@ public class SessionsController : ControllerBase
             CreatedAt = DateTime.UtcNow
         };
 
-        // Kitabın toplam süresini artır ve durumunu 'Okunuyor' yap
         book.TotalReadingSeconds += dto.DurationSeconds;
         if (book.Status == BookStatus.NotStarted)
         {
@@ -116,11 +96,10 @@ public class SessionsController : ControllerBase
         {
             message = "Oturum başarıyla kaydedildi.",
             newTotalSeconds = book.TotalReadingSeconds,
-            formattedTotal = FormatSeconds(book.TotalReadingSeconds)
+            formattedTotal = TimeFormatter.FormatSeconds(book.TotalReadingSeconds)
         });
     }
 
-    // Kitabı Bitir butonu için
     [HttpPost("book/{bookId}/complete")]
     public async Task<IActionResult> CompleteBook(int bookId)
     {

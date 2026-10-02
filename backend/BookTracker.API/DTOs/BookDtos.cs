@@ -15,6 +15,8 @@ public class CreateBookDto
 
     // Tasarımdaki renk paleti için varsayılan renk mürdüm
     public string CoverColorHex { get; set; } = "#723348";
+
+    public string? CoverImageUrl { get; set; }
 }
 
 public class BookResponseDto
@@ -27,6 +29,7 @@ public class BookResponseDto
     public int TotalReadingSeconds { get; set; }
     public string FormattedTotalTime { get; set; } = string.Empty;
     public DateTime CreatedAt { get; set; }
+    public string? CoverImageUrl { get; set; }
 }
 
 public class LogSessionDto
