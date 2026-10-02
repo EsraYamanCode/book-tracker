@@ -3,6 +3,7 @@ class BookModel {
   final String title;
   final String author;
   final String coverColorHex;
+  final String? coverImageUrl;
   final String status;
   final int totalReadingSeconds;
   final String formattedTotalTime;
@@ -12,6 +13,7 @@ class BookModel {
     required this.title,
     required this.author,
     required this.coverColorHex,
+    this.coverImageUrl,
     required this.status,
     required this.totalReadingSeconds,
     required this.formattedTotalTime,
@@ -23,6 +25,7 @@ class BookModel {
       title: json['title'] as String,
       author: json['author'] as String,
       coverColorHex: json['coverColorHex'] as String,
+      coverImageUrl: json['coverImageUrl'] as String?,
       status: json['status'] as String,
       totalReadingSeconds: json['totalReadingSeconds'] as int? ?? 0,
       formattedTotalTime: json['formattedTotalTime'] as String? ?? '0 dk',
@@ -35,6 +38,7 @@ class BookModel {
       'title': title,
       'author': author,
       'coverColorHex': coverColorHex,
+      'coverImageUrl': coverImageUrl,
       'status': status,
       'totalReadingSeconds': totalReadingSeconds,
       'formattedTotalTime': formattedTotalTime,

@@ -12,11 +12,13 @@ class BookCreateSubmitted extends BookEvent {
   final String title;
   final String author;
   final String coverColorHex;
+  final String? coverImageUrl;
 
   const BookCreateSubmitted({
     required this.title,
     required this.author,
     required this.coverColorHex,
+    this.coverImageUrl,
   });
 
   @override

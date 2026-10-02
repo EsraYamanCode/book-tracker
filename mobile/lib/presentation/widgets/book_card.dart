@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../core/constants/app_theme.dart';
 import '../../core/utils/color_utils.dart';
 import '../../data/models/book_model.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class BookCard extends StatelessWidget {
   final BookModel book;
@@ -21,6 +22,63 @@ class BookCard extends StatelessWidget {
     double height = 115,
     double titleSize = 10,
     double authorSize = 7.5,
+  }) {
+    if (book.coverImageUrl != null && book.coverImageUrl!.isNotEmpty) {
+      return Container(
+        width: width,
+        height: height,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(6),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.45),
+              blurRadius: 10,
+              offset: const Offset(3, 6),
+            ),
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(6),
+          child: CachedNetworkImage(
+            imageUrl: book.coverImageUrl!,
+            width: width,
+            height: height,
+            fit: BoxFit.cover,
+            placeholder: (context,url) => _buildFallbackCover(
+                book: book,
+                width: width,
+                height: height,
+                titleSize: titleSize,
+                authorSize: authorSize,
+            ), 
+            errorWidget: (context, url, error) => _buildFallbackCover(
+              book: book,
+              width: width,
+              height: height,
+              titleSize: titleSize,
+              authorSize: authorSize,
+            ),
+            fadeInDuration: const Duration(milliseconds: 200),
+          ),
+        ),
+      );
+    }
+
+    return _buildFallbackCover(
+      book: book,
+      width: width,
+      height: height,
+      titleSize: titleSize,
+      authorSize: authorSize,
+    );
+  }
+
+  static Widget _buildFallbackCover({
+    required BookModel book,
+    required double width,
+    required double height,
+    required double titleSize,
+    required double authorSize,
   }) {
     return Container(
       width: width,

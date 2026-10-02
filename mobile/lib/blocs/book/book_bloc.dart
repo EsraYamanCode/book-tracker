@@ -36,6 +36,7 @@ class BookBloc extends Bloc<BookEvent, BookState> {
         title: event.title,
         author: event.author,
         coverColorHex: event.coverColorHex,
+        coverImageUrl: event.coverImageUrl,
       );
       final updatedBooks = await _bookRepository.getBooks();
       emit(BookLoaded(books: updatedBooks));
