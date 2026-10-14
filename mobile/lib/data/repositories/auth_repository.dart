@@ -1,47 +1,37 @@
-import 'dart:convert';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:http/http.dart' as http;
+import 'package:sayfa/core/network/api_client.dart';
 import '../../core/constants/api_constants.dart';
 
 class AuthRepository {
+  final ApiClient _client;
   final _storage = const FlutterSecureStorage();
+
+  AuthRepository(this._client);
+
   Future<void> login(String email, String password) async {
-    final response = await http.post(
-      Uri.parse('${ApiConstants.baseUrl}${ApiConstants.login}'),
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({'email': email, 'password': password}),
-    );
-    if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
-      await _storage.write(key: 'jwt_token', value: data['token']);
-      await _storage.write(key: 'user_email', value: data['email']);
-    } else {
-      final error = jsonDecode(response.body);
-      throw Exception(error['message'] ?? 'Giriş başarısız oldu.');
-    }
+    final data = await _client.post(ApiConstants.login, {
+      'email': email,
+      'password': password,
+    }, withAuth: false);
+    await _storage.write(key: 'jwt_token', value: data['token']);
+    await _storage.write(key: 'user_email', value: data['email']);
   }
 
   Future<void> register(String email, String password) async {
-    final response = await http.post(
-      Uri.parse('${ApiConstants.baseUrl}${ApiConstants.register}'),
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({'email': email, 'password': password}),
-    );
-    if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
-      await _storage.write(key: 'jwt_token', value: data['token']);
-      await _storage.write(key: 'user_email', value: data['email']);
-    } else {
-      final error = jsonDecode(response.body);
-      throw Exception(error['message'] ?? 'Kayıt başarısız oldu.');
-    }
+    final data = await _client.post(ApiConstants.register, {
+      'email': email,
+      'password': password,
+    }, withAuth: false);
+    await _storage.write(key: 'jwt_token', value: data['token']);
+    await _storage.write(key: 'user_email', value: data['email']);
   }
 
-  Future<void> logout() async {
-    await _storage.deleteAll();
-  }
+  Future<void> logout() async => _storage.deleteAll();
 
-  Future<String?> getToken() async {
-    return await _storage.read(key: 'jwt_token');
+  Future<void> deleteAccount() async {
+    await _client.delete(ApiConstants.deleteAccount);
+    await _storage.delete(key: 'jwt_token');
   }
+  
+  Future<String?> getToken() async => _storage.read(key: 'jwt_token');
 }

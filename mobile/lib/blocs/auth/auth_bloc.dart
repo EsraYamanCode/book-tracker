@@ -7,12 +7,13 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final AuthRepository _authRepository;
 
   AuthBloc({required AuthRepository authRepository})
-      : _authRepository = authRepository,
-        super(AuthInitial()) {
+    : _authRepository = authRepository,
+      super(AuthInitial()) {
     on<AuthCheckRequested>(_onAuthCheckRequested);
     on<AuthLoginSubmitted>(_onAuthLoginSubmitted);
     on<AuthRegisterSubmitted>(_onAuthRegisterSubmitted);
     on<AuthLogoutRequested>(_onAuthLogoutRequested);
+    on<AuthAccountDeleteRequested>(_onAuthAccountDeleteRequested);
   }
 
   Future<void> _onAuthCheckRequested(
@@ -60,5 +61,18 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     emit(AuthLoading());
     await _authRepository.logout();
     emit(Unauthenticated());
+  }
+
+  Future<void> _onAuthAccountDeleteRequested(
+    AuthAccountDeleteRequested event,
+    Emitter<AuthState> emit,
+  ) async {
+    emit(AuthLoading());
+    try {
+      await _authRepository.deleteAccount();
+      emit(Unauthenticated());
+    } catch (e) {
+      emit(AuthFailure(message: e.toString().replaceAll('Exception: ', '')));
+    }
   }
 }

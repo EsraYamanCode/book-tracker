@@ -9,7 +9,9 @@ import '../../core/constants/app_theme.dart';
 import 'auth_screen.dart';
 import '../widgets/book_card.dart';
 import '../widgets/add_book_sheet.dart';
+import '../widgets/delete_account_dialog.dart';
 import 'reading_screen.dart';
+import 'package:sayfa/core/utils/snackbar_utils.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -31,18 +33,65 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         title: const Text('Kitaplığım'),
         actions: [
-          FloatingActionButton(
-            heroTag: 'logoutButton',
-            backgroundColor: AppTheme.accentGold,
-            foregroundColor: AppTheme.background,
-            shape: const CircleBorder(),
-            onPressed: () {
-              context.read<AuthBloc>().add(AuthLogoutRequested());
-              Navigator.of(context).pushReplacement(
-                MaterialPageRoute(builder: (_) => const AuthScreen()),
-              );
+          PopupMenuButton<String>(
+            icon: const Icon(Icons.more_vert, color: AppTheme.accentGold),
+            color: AppTheme.cardBackground,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+              side: const BorderSide(color: Colors.white10),
+            ),
+            offset: const Offset(0, 45),
+            onSelected: (value) {
+              if (value == 'logout') {
+                context.read<AuthBloc>().add(AuthLogoutRequested());
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(builder: (_) => const AuthScreen()),
+                );
+              } else if (value == 'delete_account') {
+                 DeleteAccountDialog.show(
+                  context,
+                  onConfirm: () {
+                    context.read<AuthBloc>().add(AuthAccountDeleteRequested());
+                    Navigator.of(context).pushReplacement(
+                      MaterialPageRoute(builder: (_) => const AuthScreen()),
+                    );
+                  },
+                );
+              }
             },
-            child: const Icon(Icons.logout),
+            itemBuilder: (context) => [
+              const PopupMenuItem<String>(
+                value: 'logout',
+                child: Row(
+                  children: [
+                    Icon(Icons.logout, size: 20, color: AppTheme.accentGold),
+                    SizedBox(width: 12),
+                    Text(
+                      'Çıkış Yap',
+                      style: TextStyle(color: Colors.white, fontSize: 14),
+                    ),
+                  ],
+                ),
+              ),
+
+              const PopupMenuItem<String>(
+                value: 'delete_account',
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.delete_outline,
+                      size: 20,
+                      color: Colors.redAccent,
+                    ),
+                    SizedBox(width: 12),
+                    Text(
+                      'Hesabımı Sil',
+                      style: TextStyle(color: Colors.redAccent, fontSize: 14),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
         ],
       ),
@@ -59,12 +108,7 @@ class _HomeScreenState extends State<HomeScreen> {
       body: BlocConsumer<BookBloc, BookState>(
         listener: (context, state) {
           if (state is BookFailure) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                backgroundColor: const Color(0xFF723348),
-                content: Text(state.message),
-              ),
-            );
+            context.showErrorSnack(state.message);
           }
         },
         builder: (context, state) {
@@ -86,7 +130,7 @@ class _HomeScreenState extends State<HomeScreen> {
             return ListView.separated(
               padding: const EdgeInsets.all(16),
               itemCount: state.books.length,
-              separatorBuilder: (_, __) => const SizedBox(height: 12),
+              separatorBuilder: (_, _) => const SizedBox(height: 12),
               itemBuilder: (context, index) {
                 final book = state.books[index];
                 return BookCard(
@@ -97,15 +141,10 @@ class _HomeScreenState extends State<HomeScreen> {
                     );
                   },
                   onActionTap: () {
-                    final isCompleted = book.status.toLowerCase() == 'completed';
+                    final isCompleted =
+                        book.status.toLowerCase() == 'completed';
                     if (isCompleted) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          backgroundColor: Color(0xFF723348),
-                          content: Text('Bu kitap tamamlandı.'),
-                          duration: Duration(seconds: 2),
-                        ),
-                      );
+                      context.showSuccessSnack('Bu kitap tamamlandı');
                       return;
                     }
                     Navigator.of(context).push(
@@ -113,7 +152,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         builder: (_) => ReadingScreen(book: book),
                       ),
                     );
-                  }
+                  },
                 );
               },
             );
