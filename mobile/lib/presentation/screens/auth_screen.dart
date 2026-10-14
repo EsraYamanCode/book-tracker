@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:sayfa/core/utils/snackbar_utils.dart';
 import '../../blocs/auth/auth_bloc.dart';
 import '../../blocs/auth/auth_event.dart';
 import '../../blocs/auth/auth_state.dart';
@@ -30,9 +31,7 @@ class _AuthScreenState extends State<AuthScreen> {
     final password = _passwordController.text.trim();
 
     if (email.isEmpty || password.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Lütfen tüm alanları doldurun.')),
-      );
+      context.showErrorSnack('Lütfen bu alanları doldurun');
       return;
     }
 
@@ -53,15 +52,7 @@ class _AuthScreenState extends State<AuthScreen> {
       body: BlocConsumer<AuthBloc, AuthState>(
         listener: (context, state) {
           if (state is AuthFailure) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                backgroundColor: const Color(0xFF723348),
-                content: Text(
-                  state.message,
-                  style: const TextStyle(color: AppTheme.textPrimary),
-                ),
-              ),
-            );
+            context.showErrorSnack(state.message);
           } else if (state is Authenticated) {
             Navigator.of(context).pushReplacement(
               MaterialPageRoute(builder: (_) => const HomeScreen()),

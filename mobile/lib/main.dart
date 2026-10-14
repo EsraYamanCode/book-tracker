@@ -10,6 +10,7 @@ import 'data/repositories/book_repository.dart';
 import 'data/repositories/session_repository.dart';
 import 'presentation/screens/auth_screen.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
+import 'core/network/api_client.dart';
 
 void main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
@@ -32,11 +33,13 @@ class _AppState extends State<App> {
       FlutterNativeSplash.remove();
     });
   }
+
   @override
   Widget build(BuildContext context) {
-    final authRepository = AuthRepository();
+    final apiClient = ApiClient();
+    final authRepository = AuthRepository(apiClient);
     final sessionRepository = SessionRepository();
-    final bookRepository = BookRepository();
+    final bookRepository = BookRepository(apiClient);
     return MultiRepositoryProvider(
       providers: [
         RepositoryProvider.value(value: authRepository),
@@ -53,12 +56,7 @@ class _AppState extends State<App> {
                   ..add(AuthCheckRequested()),
           ),
           BlocProvider(
-            create: (context) =>
-                BookBloc(bookRepository: bookRepository),
-          ),
-          BlocProvider(
-            create: (context) =>
-                BookBloc(bookRepository: bookRepository),
+            create: (context) => BookBloc(bookRepository: bookRepository),
           ),
           BlocProvider(
             create: (context) =>

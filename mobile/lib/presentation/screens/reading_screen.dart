@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:sayfa/core/utils/snackbar_utils.dart';
 import '../../blocs/book/book_bloc.dart';
 import '../../blocs/book/book_event.dart';
 import '../../blocs/timer/timer_bloc.dart';
@@ -92,20 +93,13 @@ class _ReadingScreenState extends State<ReadingScreen> {
               if (state is TimerSaveSuccess) {
                 context.read<BookBloc>().add(BookFetchRequested());
                 context.read<TimerBloc>().add(TimerReset());
+                setState(() {
+                  _sessionCount++;
+                });
                 Navigator.pop(context);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    backgroundColor: Color(0xFF1B4D3E),
-                    content: Text('Okuma oturumu başarıyla kaydedildi!'),
-                  ),
-                );
+                context.showSuccessSnack('Okuma oturumu başarıyla kaydedildi!');
               } else if (state is TimerSaveFailure) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    backgroundColor: const Color(0xFF723348),
-                    content: Text(state.message),
-                  ),
-                );
+                context.showErrorSnack(state.message);
               }
             },
             builder: (context, state) {
@@ -234,18 +228,9 @@ class _ReadingScreenState extends State<ReadingScreen> {
                         onFinish: () {
                           if (currentSeconds > 0) {
                             _openSaveDialog(context, currentSeconds);
-                            onConfirm(isCompleted) {
-                              setState(() {
-                                _sessionCount++;
-                              });
-                            }
                           } else {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text(
-                                  'Kaydedilecek bir süre henüz yok.',
-                                ),
-                              ),
+                            context.showErrorSnack(
+                              'Kaydedilecek bir süre henüz yok.',
                             );
                           }
                         },

@@ -14,7 +14,6 @@ class SessionRepository {
     };
   }
 
-  // 1. Okuma Seansını Kaydetme
   Future<void> createSession({
     required int bookId,
     required int durationSeconds,
@@ -34,7 +33,6 @@ class SessionRepository {
     final response = await http.post(url, headers: headers, body: body);
 
     if (response.statusCode != 200 && response.statusCode != 201) {
-      // Eğer controller route'u sadece "api" ise bir de /book/$bookId/log deneyelim:
       if (response.statusCode == 404) {
         final fallbackUrl = Uri.parse(
           '${ApiConstants.baseUrl}/book/$bookId/log',
@@ -63,13 +61,11 @@ class SessionRepository {
       throw Exception(message);
     }
 
-    // Kullanıcı "Kitabı tamamen bitirdim" onay kutusunu seçtiyse:
     if (isCompleted) {
       await completeBook(bookId, headers);
     }
   }
 
-  // 2. Kitabı Tamamlandı Olarak İşaretleme
   Future<void> completeBook(
     int bookId,
     Map<String, String> headers, {
@@ -84,15 +80,12 @@ class SessionRepository {
     );
   }
 
-  // Kitabın oturum istatistiklerini backend'den çeker
   Future<Map<String, dynamic>> getBookStats(int bookId) async {
     final headers = await _getHeaders();
 
-    // 1. Controller sessions altındaysa:
     var url = Uri.parse('${ApiConstants.baseUrl}/sessions/book/$bookId');
     var response = await http.get(url, headers: headers);
 
-    // 2. Eğer controller sadece api altındaysa fallback:
     if (response.statusCode == 404) {
       url = Uri.parse('${ApiConstants.baseUrl}/book/$bookId');
       response = await http.get(url, headers: headers);
@@ -108,7 +101,7 @@ class SessionRepository {
           : '-';
 
       return {
-        'sessionCount': sessionCount + 1, // Sıradaki oturum numarası (#2 gibi)
+        'sessionCount': sessionCount + 1,
         'totalTime': data['formattedTotalTime'] as String? ?? '0 dk',
         'lastSessionTime': lastSession,
       };
