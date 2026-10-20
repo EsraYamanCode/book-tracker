@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import '../../core/constants/api_constants.dart';
+import '../models/user_stats_model.dart';
 
 class SessionRepository {
   final _storage = const FlutterSecureStorage();
@@ -109,4 +110,19 @@ class SessionRepository {
       throw Exception('Oturum bilgileri alınamadı (${response.statusCode})');
     }
   }
+
+  Future<UserStatsModel> getStatsSummary() async {
+    final headers = await _getHeaders();
+    final url = Uri.parse('${ApiConstants.baseUrl}/stats/summary');
+
+    final response = await http.get(url, headers: headers);
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body) as Map<String, dynamic>;
+      return UserStatsModel.fromJson(data);
+    } else {
+      throw Exception('İstatistikler alınamadı (${response.statusCode})');
+    }
+  }
+
 }

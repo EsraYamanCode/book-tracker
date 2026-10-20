@@ -13,6 +13,7 @@ import '../widgets/save_session_dialog.dart';
 import '../widgets/session_stats_card.dart';
 import '../widgets/timer_controls.dart';
 import '../widgets/book_card.dart';
+import '../widgets/ambiance_frame.dart';
 
 class ReadingScreen extends StatefulWidget {
   final BookModel book;
@@ -147,6 +148,7 @@ class _ReadingScreenState extends State<ReadingScreen> {
                       ),
                     ),
                     const SizedBox(height: 16),
+                    const AmbianceFrame(gifPath: 'assets/gifs/indir.gif'),
                     BookCard.buildCover(
                       book: widget.book,
                       width: 120,
