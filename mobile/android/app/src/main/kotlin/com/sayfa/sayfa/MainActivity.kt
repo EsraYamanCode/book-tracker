@@ -1,4 +1,4 @@
-package com.sayfa.sayfa
+package com.booktracker.app
 
 import io.flutter.embedding.android.FlutterActivity
 
