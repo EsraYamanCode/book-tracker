@@ -154,6 +154,62 @@ class _AuthScreenState extends State<AuthScreen> {
                     ),
                     const SizedBox(height: 20),
 
+                    Row(
+                      children: const [
+                        Expanded(child: Divider(color: AppTheme.surface)),
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 12),
+                          child: Text(
+                            'VEYA',
+                            style: TextStyle(
+                              color: AppTheme.textSecondary,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                        Expanded(child: Divider(color: AppTheme.surface)),
+                      ],
+                    ),
+                    const SizedBox(height: 20),
+
+                    // Google ile Giriş Butonu
+                    OutlinedButton.icon(
+                      onPressed: isLoading
+                          ? null
+                          : () {
+                              context.read<AuthBloc>().add(
+                                GoogleSignInRequested(),
+                              );
+                            },
+                      style: OutlinedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        side: const BorderSide(
+                          color: AppTheme.surface,
+                          width: 1.5,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        backgroundColor: AppTheme.surface,
+                      ),
+                      icon: const Icon(
+                        Icons
+                            .g_mobiledata_rounded, // Varsa Google ikonu veya standart g simgesi
+                        size: 28,
+                        color: AppTheme.accentGold,
+                      ),
+                      label: const Text(
+                        'Google ile Devam Et',
+                        style: TextStyle(
+                          color: AppTheme.textPrimary,
+                          fontSize: 15,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+
                     TextButton(
                       onPressed: () {
                         setState(() {

@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Authorization;
+using Google.Apis.Auth;
 
 namespace BookTracker.API.Controllers;
 
@@ -72,6 +73,56 @@ public class AuthController : BaseApiController
             Email = user.Email,
             Token = token
         });
+    }
+    [HttpPost("google")]
+    public async Task<IActionResult> GoogleLogin([FromBody] GoogleLoginDto dto)
+    {
+        try
+        {
+            // 1. Google'dan gelen ID Token'ı Google sunucularında doğruluyoruz
+            var payload = await GoogleJsonWebSignature.ValidateAsync(dto.IdToken);
+
+            if (payload == null)
+            {
+                return BadRequest(new { message = "Geçersiz Google token'ı." });
+            }
+
+            var email = payload.Email.ToLower();
+
+            // 2. Kullanıcı veritabanımızda var mı kontrol ediyoruz
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+
+            // 3. Kullanıcı yoksa otomatik oluşturuyoruz
+            if (user == null)
+            {
+                user = new User
+                {
+                    Email = email,
+                    PasswordHash = BCrypt.Net.BCrypt.HashPassword(Guid.NewGuid().ToString()) // Rastgele şifre hash'i
+                };
+
+                _context.Users.Add(user);
+                await _context.SaveChangesAsync();
+            }
+
+            // 4. Kendi uygulamamıza ait JWT token'ı üretiyoruz
+            var token = GenerateJwtToken(user);
+
+            return Ok(new AuthResponseDto
+            {
+                UserId = user.Id,
+                Email = user.Email,
+                Token = token
+            });
+        }
+        catch (InvalidJwtException)
+        {
+            return Unauthorized(new { message = "Google doğrulaması başarısız oldu." });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { message = $"Sunucu hatası: {ex.Message}" });
+        }
     }
 
     private string GenerateJwtToken(User user)
