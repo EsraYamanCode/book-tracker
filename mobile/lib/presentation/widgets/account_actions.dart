@@ -9,10 +9,7 @@ import 'delete_account_dialog.dart';
 class AccountActions extends StatelessWidget {
   final String displayName;
 
-  const AccountActions({
-    super.key,
-    required this.displayName,
-  });
+  const AccountActions({super.key, required this.displayName});
 
   @override
   Widget build(BuildContext context) {
@@ -42,6 +39,8 @@ class AccountActions extends StatelessWidget {
             children: [
               Text(
                 displayName,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
                 style: const TextStyle(
                   color: Colors.white,
                   fontSize: 16,
@@ -89,9 +88,9 @@ class AccountActions extends StatelessWidget {
                         DeleteAccountDialog.show(
                           context,
                           onConfirm: () {
-                            context
-                                .read<AuthBloc>()
-                                .add(AuthAccountDeleteRequested());
+                            context.read<AuthBloc>().add(
+                              AuthAccountDeleteRequested(),
+                            );
                             Navigator.of(context).pushAndRemoveUntil(
                               MaterialPageRoute(
                                 builder: (_) => const AuthScreen(),

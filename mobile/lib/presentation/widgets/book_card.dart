@@ -51,13 +51,16 @@ class BookCard extends StatelessWidget {
                 titleSize: titleSize,
                 authorSize: authorSize,
             ), 
-            errorWidget: (context, url, error) => _buildFallbackCover(
-              book: book,
-              width: width,
-              height: height,
-              titleSize: titleSize,
-              authorSize: authorSize,
-            ),
+            errorWidget: (context, url, error) {
+              debugPrint('Kapak yüklenemedi: $url -> $error');
+              return _buildFallbackCover(
+                book: book,
+                width: width,
+                height: height,
+                titleSize: titleSize,
+                authorSize: authorSize,
+              );
+            },
             fadeInDuration: const Duration(milliseconds: 200),
           ),
         ),

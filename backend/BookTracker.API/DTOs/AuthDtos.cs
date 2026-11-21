@@ -29,3 +29,9 @@ public class AuthResponseDto
     public string Email { get; set; } = string.Empty;
     public string Token { get; set; } = string.Empty;
 }
+
+public class GoogleLoginDto
+{
+    [Required]
+    public string IdToken { get; set; } = string.Empty;
+}

@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../data/repositories/auth_repository.dart';
 import 'auth_event.dart';
@@ -14,6 +15,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<AuthRegisterSubmitted>(_onAuthRegisterSubmitted);
     on<AuthLogoutRequested>(_onAuthLogoutRequested);
     on<AuthAccountDeleteRequested>(_onAuthAccountDeleteRequested);
+    on<GoogleSignInRequested>(_onGoogleSignInRequested);
   }
 
   Future<void> _onAuthCheckRequested(
@@ -75,4 +77,25 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       emit(AuthFailure(message: e.toString().replaceAll('Exception: ', '')));
     }
   }
+  
+  Future<void> _onGoogleSignInRequested(
+    GoogleSignInRequested event,
+    Emitter<AuthState> emit,
+  ) async {
+    emit(AuthLoading());
+    try {
+      final idToken = await _authRepository.signInWithGoogle();
+      if (idToken == null) {
+        emit(Unauthenticated()); // Kullanıcı vazgeçtiyse
+        return;
+      }
+
+      await _authRepository.loginWithGoogle(idToken);
+      emit(Authenticated());
+    } catch (e) {
+      debugPrint('Google giriş hatası: $e');
+      emit(AuthFailure(message: 'Google ile giriş başarısız oldu.'));
+    }
+  }
 }
+

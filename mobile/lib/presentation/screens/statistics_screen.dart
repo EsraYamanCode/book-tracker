@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../core/constants/app_theme.dart';
 import '../../data/models/user_stats_model.dart';
+import '../../data/repositories/auth_repository.dart';
 import '../../data/repositories/session_repository.dart';
 import '../widgets/account_actions.dart';
 import '../widgets/monthly_heatmap.dart';
@@ -16,17 +17,17 @@ class StatisticsScreen extends StatefulWidget {
 
 class _StatisticsScreenState extends State<StatisticsScreen> {
   late Future<UserStatsModel> _statsFuture;
+  late Future<String?> _emailFuture;
 
   @override
   void initState() {
     super.initState();
     _statsFuture = context.read<SessionRepository>().getStatsSummary();
+    _emailFuture = context.read<AuthRepository>().getEmail();
   }
 
   @override
   Widget build(BuildContext context) {
-    const String userDisplayName = 'Yamaann Esra';
-
     return Scaffold(
       backgroundColor: AppTheme.background,
       appBar: AppBar(
@@ -52,8 +53,8 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
             );
           }
 
-          final stats = snapshot.data ??
-              UserStatsModel(currentStreak: 0, datasets: {});
+          final stats =
+              snapshot.data ?? UserStatsModel(currentStreak: 0, datasets: {});
 
           return SingleChildScrollView(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -64,7 +65,16 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                 const SizedBox(height: 18),
                 MonthlyHeatmap(datasets: stats.datasets),
                 const SizedBox(height: 28),
-                const AccountActions(displayName: userDisplayName),
+                FutureBuilder<String?>(
+                  future: _emailFuture,
+                  builder: (context, emailSnapshot) {
+                    final email = emailSnapshot.data;
+                    return AccountActions(
+                      displayName:
+                          (email == null || email.isEmpty) ? 'Hesabım' : email,
+                    );
+                  },
+                ),
                 const SizedBox(height: 32),
               ],
             ),

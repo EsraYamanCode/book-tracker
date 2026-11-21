@@ -10,7 +10,11 @@ class ApiConstants {
 
   static const String register = '/Auth/register';
   static const String login = '/Auth/login';
+  static const String googleLogin = '/Auth/google';
   static const String deleteAccount = '/Auth/account';
   static const String books = '/Books';
   static const String sessions = '/Sessions';
+
+  static const String googleClientId =
+      '323463991010-e11a0i9ut5e611kcp2pilplojb37nino.apps.googleusercontent.com';
 }
