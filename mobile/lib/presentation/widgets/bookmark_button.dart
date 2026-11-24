@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../core/constants/app_theme.dart';
 
 class BookmarkButton extends StatefulWidget {
   final VoidCallback onTap;
@@ -39,14 +40,14 @@ class _BookmarkButtonState extends State<BookmarkButton> {
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
-                colors: [Color(0xFFD9A04A), Color(0xFFB88030)],
+                colors: [AppTheme.accentGoldSoft, AppTheme.accentGoldDark],
               ),
             ),
             alignment: const Alignment(0, 0.5),
             child: const Icon(
               Icons.bar_chart_rounded,
               size: 19,
-              color: Color(0xFF1B1714),
+              color: AppTheme.cardBackground,
             ),
           ),
         ),

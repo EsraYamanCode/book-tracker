@@ -18,7 +18,7 @@ class AmbianceFrame extends StatelessWidget {
           width: double.infinity,
           margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
           decoration: BoxDecoration(
-            color: const Color(0xFF14110E), // Derin ahşap/gölge tonu
+            color: AppTheme.background,
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
               color: AppTheme.accentGold.withOpacity(0.35),
@@ -79,7 +79,7 @@ class AmbianceFrame extends StatelessWidget {
             Text(
               'Okuma Ambiyansı Hazırlanıyor...',
               style: TextStyle(
-                color: const Color(0xFFEADBCE).withOpacity(0.5),
+                color: AppTheme.textPrimary.withOpacity(0.5),
                 fontSize: 12,
                 letterSpacing: 0.8,
                 fontStyle: FontStyle.italic,

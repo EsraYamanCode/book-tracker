@@ -44,13 +44,13 @@ class BookCard extends StatelessWidget {
             width: width,
             height: height,
             fit: BoxFit.cover,
-            placeholder: (context,url) => _buildFallbackCover(
-                book: book,
-                width: width,
-                height: height,
-                titleSize: titleSize,
-                authorSize: authorSize,
-            ), 
+            placeholder: (context, url) => _buildFallbackCover(
+              book: book,
+              width: width,
+              height: height,
+              titleSize: titleSize,
+              authorSize: authorSize,
+            ),
             errorWidget: (context, url, error) {
               debugPrint('Kapak yüklenemedi: $url -> $error');
               return _buildFallbackCover(
@@ -133,10 +133,10 @@ class BookCard extends StatelessWidget {
     final bool isCompleted = statusStr == 'completed';
     final bool isReading = statusStr == 'reading';
 
-    Color statusColor = const Color(0xFF6B645C);
+    Color statusColor = AppTheme.textMuted;
     String statusText = 'Okunmadı';
     if (isCompleted) {
-      statusColor = const Color(0xFF4E9A6F);
+      statusColor = AppTheme.accentGreenText;
       statusText = 'Tamamlandı';
     } else if (isReading) {
       statusColor = AppTheme.accentGold;
@@ -157,7 +157,7 @@ class BookCard extends StatelessWidget {
         alignment: Alignment.centerRight,
         padding: const EdgeInsets.only(right: 24),
         decoration: BoxDecoration(
-          color: const Color(0xFF723348),
+          color: AppTheme.error,
           borderRadius: BorderRadius.circular(16),
         ),
         child: const Icon(Icons.delete_outline, color: Colors.white, size: 24),
@@ -167,9 +167,9 @@ class BookCard extends StatelessWidget {
         width: double.infinity,
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: const Color(0xFF1B1713), // Görseldeki koyu arka plan
+          color: AppTheme.cardBackground,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: const Color(0xFF28231D), width: 1),
+          border: Border.all(color: AppTheme.borderSubtle, width: 1),
         ),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -209,7 +209,7 @@ class BookCard extends StatelessWidget {
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: const TextStyle(
-                            color: Color(0xFF7D7366),
+                            color: AppTheme.textMuted,
                             fontSize: 13,
                           ),
                         ),
@@ -247,7 +247,7 @@ class BookCard extends StatelessWidget {
                             const Text(
                               'Toplam Süre',
                               style: TextStyle(
-                                color: Color(0xFF6B645C),
+                                color: AppTheme.textMuted,
                                 fontSize: 10,
                               ),
                             ),
@@ -272,13 +272,13 @@ class BookCard extends StatelessWidget {
                                 Icon(
                                   Icons.check,
                                   size: 14,
-                                  color: Color(0xFF4E9A6F),
+                                  color: AppTheme.accentGreenText,
                                 ),
                                 SizedBox(width: 4),
                                 Text(
                                   'Bitti',
                                   style: TextStyle(
-                                    color: Color(0xFF4E9A6F),
+                                    color: AppTheme.accentGreenText,
                                     fontSize: 12,
                                     fontWeight: FontWeight.bold,
                                   ),
@@ -298,7 +298,7 @@ class BookCard extends StatelessWidget {
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(8),
                                 border: Border.all(
-                                  color: const Color(0xFF5A4425),
+                                  color: AppTheme.accentBronze,
                                   width: 1,
                                 ),
                               ),

@@ -28,7 +28,7 @@ class DeleteAccountDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      backgroundColor: const Color(0xFF1B1714),
+      backgroundColor: AppTheme.cardBackground,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
         side: BorderSide(
@@ -44,12 +44,12 @@ class DeleteAccountDialog extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: Colors.redAccent.withOpacity(0.12),
+              color: AppTheme.error.withOpacity(0.12),
               borderRadius: BorderRadius.circular(10),
             ),
             child: const Icon(
               Icons.warning_amber_rounded,
-              color: Colors.redAccent,
+              color: AppTheme.error,
               size: 22,
             ),
           ),
@@ -57,7 +57,7 @@ class DeleteAccountDialog extends StatelessWidget {
           const Text(
             'Hesabı Sil',
             style: TextStyle(
-              color: Color(0xFFEADBCE),
+              color: AppTheme.textPrimary,
               fontSize: 18,
               fontWeight: FontWeight.w600,
             ),
@@ -67,7 +67,7 @@ class DeleteAccountDialog extends StatelessWidget {
       content: const Text(
         'Hesabınızı ve kitaplığınıza ait tüm okuma geçmişini kalıcı olarak silmek üzeresiniz. Bu işlem geri alınamaz.',
         style: TextStyle(
-          color: Colors.white70,
+          color: AppTheme.textMuted,
           fontSize: 13.5,
           height: 1.4,
         ),

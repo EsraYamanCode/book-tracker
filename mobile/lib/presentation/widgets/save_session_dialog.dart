@@ -38,7 +38,7 @@ class _SaveSessionDialogState extends State<SaveSessionDialog> {
       backgroundColor: AppTheme.surface,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(18),
-        side: const BorderSide(color: Color(0xFF2B2620)),
+        side: const BorderSide(color: AppTheme.borderSubtle),
       ),
       child: Padding(
         padding: const EdgeInsets.all(22.0),
@@ -65,7 +65,7 @@ class _SaveSessionDialogState extends State<SaveSessionDialog> {
               decoration: BoxDecoration(
                 color: AppTheme.cardBackground,
                 borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: const Color(0xFF2B2620)),
+                border: Border.all(color: AppTheme.borderSubtle),
               ),
               child: Text(
                 _formatDuration(widget.durationSeconds),

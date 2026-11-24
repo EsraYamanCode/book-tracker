@@ -5,7 +5,7 @@ extension SnackbarX on BuildContext {
   void showErrorSnack(String message) {
     ScaffoldMessenger.of(this).showSnackBar(
       SnackBar(
-        backgroundColor: const Color(0xFF723348),
+        backgroundColor: AppTheme.error,
         content: Text(message, style: const TextStyle(color: AppTheme.textPrimary)),
       ),
     );
@@ -13,7 +13,7 @@ extension SnackbarX on BuildContext {
 
   void showSuccessSnack(String message) {
     ScaffoldMessenger.of(this).showSnackBar(
-      SnackBar(backgroundColor: const Color(0xFF1B4D3E), content: Text(message)),
+      SnackBar(backgroundColor: AppTheme.snackbarSuccess, content: Text(message, style: const TextStyle(color: AppTheme.textPrimary))),
     );
   }
 }

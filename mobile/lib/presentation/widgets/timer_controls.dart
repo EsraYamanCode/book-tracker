@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../core/constants/app_theme.dart';
 
 class TimerControls extends StatelessWidget {
   final bool isRunning;          // Sayaç şu an çalışıyor mu?
@@ -21,8 +22,8 @@ class TimerControls extends StatelessWidget {
           child: OutlinedButton(
             onPressed: onToggle,
             style: OutlinedButton.styleFrom(
-              backgroundColor: const Color(0xFFD4A359), // Sarı dolgu
-              foregroundColor: const Color(0xFF14120E), // Koyu yazı rengi
+              backgroundColor: AppTheme.accentGoldSoft, // Sarı dolgu
+              foregroundColor: AppTheme.background, // Koyu yazı rengi
               padding: const EdgeInsets.symmetric(vertical: 16),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(14),
@@ -34,7 +35,7 @@ class TimerControls extends StatelessWidget {
                 Icon(
                   isRunning ? Icons.pause : Icons.play_arrow,
                   size: 20,
-                  color: const Color(0xFF14120E),
+                  color: AppTheme.background,
                 ),
                 const SizedBox(width: 8),
                 Text(
@@ -56,9 +57,9 @@ class TimerControls extends StatelessWidget {
           child: OutlinedButton(
             onPressed: onFinish,
             style: OutlinedButton.styleFrom(
-              backgroundColor: const Color(0xFF1B2E23), // Koyu yeşil arka plan
-              side: const BorderSide(color: Color(0xFF2C4A38), width: 1.2), // İnce yeşil çerçeve
-              foregroundColor: const Color(0xFF4E9A6F), // Canlı yeşil yazı rengi
+              backgroundColor: AppTheme.accentGreen, // Koyu yeşil arka plan
+              side: const BorderSide(color: AppTheme.accentGreenBorder, width: 1.2), // İnce yeşil çerçeve
+              foregroundColor: AppTheme.accentGreenText, // Canlı yeşil yazı rengi
               padding: const EdgeInsets.symmetric(vertical: 16),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(14),
@@ -67,7 +68,7 @@ class TimerControls extends StatelessWidget {
             child: const Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.check, size: 18, color: Color(0xFF4E9A6F)),
+                Icon(Icons.check, size: 18, color: AppTheme.accentGreenText),
                 SizedBox(width: 8),
                 Text(
                   'Bitirdim',
