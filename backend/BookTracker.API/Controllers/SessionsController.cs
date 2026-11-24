@@ -71,7 +71,7 @@ public class SessionsController : BaseApiController
         if (book == null)
             return NotFound(new { message = "Kitap bulunamadı." });
 
-        if (dto.DurationSeconds <= 0)
+        if (dto.DurationSeconds < 60)
             return BadRequest(new { message = "Geçerli bir okuma süresi girilmelidir." });
 
         var session = new ReadingSession

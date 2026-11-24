@@ -43,7 +43,7 @@ class SessionStatsCard extends StatelessWidget {
   }
 
   Widget _buildDivider() {
-    return Container(width: 1, height: 32, color: const Color(0xFF2B2620));
+    return Container(width: 1, height: 32, color: AppTheme.borderSubtle);
   }
 
   @override
@@ -53,16 +53,20 @@ class SessionStatsCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppTheme.cardBackground,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFF2B2620)),
+        border: Border.all(color: AppTheme.borderSubtle),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          _buildStatColumn(label: 'TOPLAM\nSÜRE', value: totalTime, valueColor: AppTheme.accentGold),
+          _buildStatColumn(
+            label: 'TOPLAM\nSÜRE',
+            value: totalTime,
+            valueColor: AppTheme.accentGold,
+          ),
           _buildDivider(),
           _buildStatColumn(label: 'OTURUM', value: '#$sessionCount'),
           _buildDivider(),
-          _buildStatColumn(label: 'SON\nOTURUM', value: lastSessionTime)
+          _buildStatColumn(label: 'SON\nOTURUM', value: lastSessionTime),
         ],
       ),
     );

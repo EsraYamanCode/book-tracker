@@ -102,9 +102,10 @@ class SessionRepository {
           : '-';
 
       return {
-        'sessionCount': sessionCount + 1,
+        'sessionCount': sessionCount,
         'totalTime': data['formattedTotalTime'] as String? ?? '0 dk',
         'lastSessionTime': lastSession,
+        'sessions': sessions ?? [],
       };
     } else {
       throw Exception('Oturum bilgileri alınamadı (${response.statusCode})');

@@ -14,6 +14,7 @@ import '../widgets/session_stats_card.dart';
 import '../widgets/timer_controls.dart';
 import '../widgets/book_card.dart';
 import '../widgets/ambiance_frame.dart';
+import '../widgets/session_history_sheet.dart';
 
 class ReadingScreen extends StatefulWidget {
   final BookModel book;
@@ -24,9 +25,10 @@ class ReadingScreen extends StatefulWidget {
 }
 
 class _ReadingScreenState extends State<ReadingScreen> {
-  int _sessionCount = 1;
+  int _sessionCount = 0;
   String _totalTime = '';
   String _lastSessionTime = '-';
+  List<dynamic> _sessions = [];
 
   @override
   void initState() {
@@ -45,6 +47,7 @@ class _ReadingScreenState extends State<ReadingScreen> {
           _sessionCount = stats['sessionCount'] as int;
           _totalTime = stats['totalTime'] as String;
           _lastSessionTime = stats['lastSessionTime'] as String;
+          _sessions = (stats['sessions'] as List<dynamic>?) ?? [];
         });
       }
     } catch (_) {}
@@ -149,64 +152,97 @@ class _ReadingScreenState extends State<ReadingScreen> {
                     ),
                     const SizedBox(height: 16),
                     const AmbianceFrame(gifPath: 'assets/gifs/indir.gif'),
-                    BookCard.buildCover(
-                      book: widget.book,
-                      width: 120,
-                      height: 170,
-                      titleSize: 12,
-                      authorSize: 9,
+                    const SizedBox(height: 24),
+
+                    // SOLDA KİTAP KAPAĞI - SAĞDA BAŞLIK, YAZAR VE SAYAÇ
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        // Sol Taraf: Kitap Kapağı
+                        BookCard.buildCover(
+                          book: widget.book,
+                          width: 110,
+                          height: 160,
+                          titleSize: 12,
+                          authorSize: 9,
+                        ),
+                        const SizedBox(width: 20),
+
+                        // Sağ Taraf: Kitap İsmi, Yazar ve Süre Sayacı
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                widget.book.title,
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  color: AppTheme.textPrimary,
+                                  letterSpacing: 0.4,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                widget.book.author,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  color: AppTheme.textSecondary,
+                                ),
+                              ),
+                              const SizedBox(height: 16),
+                              Text(
+                                isRunning
+                                    ? 'OKUNUYOR'
+                                    : (isPaused ? 'DURAKLATILDI' : 'HAZIR'),
+                                style: const TextStyle(
+                                  color: AppTheme.accentGold,
+                                  fontSize: 10,
+                                  letterSpacing: 2.5,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              const SizedBox(height: 2),
+                              FittedBox(
+                                fit: BoxFit.scaleDown,
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                  _formatDuration(currentSeconds),
+                                  style: const TextStyle(
+                                    fontSize: 38,
+                                    fontWeight: FontWeight.w300,
+                                    letterSpacing: 2,
+                                    color: AppTheme.textPrimary,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: 20),
-                    Text(
-                      widget.book.title,
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
-                        color: AppTheme.textPrimary,
-                        letterSpacing: 0.5,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      widget.book.author,
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(
-                        fontSize: 14,
-                        color: AppTheme.textSecondary,
-                      ),
-                    ),
-                    const SizedBox(height: 36),
-                    Text(
-                      isRunning
-                          ? 'OKUNUYOR'
-                          : (isPaused ? 'DURAKLATILDI' : 'HAZIR'),
-                      style: const TextStyle(
-                        color: AppTheme.textSecondary,
-                        fontSize: 11,
-                        letterSpacing: 3,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 6),
-                    Text(
-                      _formatDuration(currentSeconds),
-                      style: const TextStyle(
-                        fontSize: 52,
-                        fontWeight: FontWeight.w300,
-                        letterSpacing: 3,
-                        color: AppTheme.textPrimary,
-                      ),
-                    ),
+
                     const SizedBox(height: 32),
-                    SessionStatsCard(
-                      totalTime:
-                          widget.book.formattedTotalTime.isEmpty ||
-                              widget.book.formattedTotalTime == '0 dk'
-                          ? '00:00:00'
-                          : widget.book.formattedTotalTime,
-                      sessionCount: _sessionCount,
-                      lastSessionTime: widget.book.formattedTotalTime,
+                    GestureDetector(
+                      onTap: () {
+                        showModalBottomSheet(
+                          context: context,
+                          backgroundColor: Colors.transparent,
+                          isScrollControlled: true,
+                          builder: (_) =>
+                              SessionHistorySheet(sessions: _sessions),
+                        );
+                      },
+                      child: SessionStatsCard(
+                        totalTime: _totalTime.isEmpty ? '0 dk' : _totalTime,
+                        sessionCount: _sessionCount,
+                        lastSessionTime: _lastSessionTime,
+                      ),
                     ),
                     const SizedBox(height: 32),
                     if (isSaving)
