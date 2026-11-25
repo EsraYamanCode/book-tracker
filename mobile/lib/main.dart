@@ -11,10 +11,12 @@ import 'data/repositories/session_repository.dart';
 import 'presentation/screens/auth_screen.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'core/network/api_client.dart';
+import 'data/services/preferences_service.dart';
 
 void main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+  await PreferencesService.instance.init();
   runApp(const App());
 }
 

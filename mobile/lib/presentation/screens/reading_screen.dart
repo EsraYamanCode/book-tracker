@@ -15,6 +15,7 @@ import '../widgets/timer_controls.dart';
 import '../widgets/book_card.dart';
 import '../widgets/ambiance_frame.dart';
 import '../widgets/session_history_sheet.dart';
+import '../../data/services/reading_notification_service.dart';
 
 class ReadingScreen extends StatefulWidget {
   final BookModel book;
@@ -29,12 +30,14 @@ class _ReadingScreenState extends State<ReadingScreen> {
   String _totalTime = '';
   String _lastSessionTime = '-';
   List<dynamic> _sessions = [];
+  bool _wasRunning = false;
 
   @override
   void initState() {
     super.initState();
     _totalTime = widget.book.formattedTotalTime;
     _loadStats();
+    _setupLockScreenNotification();
   }
 
   Future<void> _loadStats() async {
@@ -82,6 +85,17 @@ class _ReadingScreenState extends State<ReadingScreen> {
     );
   }
 
+  Future<void> _setupLockScreenNotification() async {
+    await ReadingNotificationService.instance.init();
+    await ReadingNotificationService.instance.requestPermission();
+  }
+
+  @override
+  void dispose() {
+    ReadingNotificationService.instance.cancel();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -94,7 +108,25 @@ class _ReadingScreenState extends State<ReadingScreen> {
         body: SafeArea(
           child: BlocConsumer<TimerBloc, TimerState>(
             listener: (context, state) {
-              if (state is TimerSaveSuccess) {
+              if (state is TimerRunInProgress) {
+                if (!_wasRunning) {
+                  _wasRunning = true;
+                  ReadingNotificationService.instance.showRunning(
+                    bookTitle: widget.book.title,
+                    author: widget.book.author,
+                    elapsedSeconds: state.duration,
+                  );
+                }
+              } else if (state is TimerRunPause) {
+                _wasRunning = false;
+                ReadingNotificationService.instance.showPaused(
+                  bookTitle: widget.book.title,
+                  author: widget.book.author,
+                  elapsedSeconds: state.duration,
+                );
+              } else if (state is TimerSaveSuccess) {
+                _wasRunning = false;
+                ReadingNotificationService.instance.cancel();
                 context.read<BookBloc>().add(BookFetchRequested());
                 context.read<TimerBloc>().add(TimerReset());
                 setState(() {
@@ -104,6 +136,9 @@ class _ReadingScreenState extends State<ReadingScreen> {
                 context.showSuccessSnack('Okuma oturumu başarıyla kaydedildi!');
               } else if (state is TimerSaveFailure) {
                 context.showErrorSnack(state.message);
+              } else {
+                _wasRunning = false;
+                ReadingNotificationService.instance.cancel();
               }
             },
             builder: (context, state) {
